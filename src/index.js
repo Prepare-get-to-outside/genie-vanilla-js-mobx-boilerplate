@@ -11,24 +11,6 @@ const calculator = observable({
 });
 
 /**
- * reaction: 특정 값이 바뀔 때 특정 작업 하기!
- * a 나 b 가 바뀔 때 console.log 로 바뀌었다고 알려주도록 코드를 작성
- */
-reaction(
-  () => calculator.a,
-  (value, reaction) => {
-    console.log(`a 값이 ${value} 로 바뀌었네요!`);
-  }
-);
-
-reaction(
-  () => calculator.b,
-  (value) => {
-    console.log(`b 값이 ${value} 로 바뀌었네요!`);
-  }
-);
-
-/**
  * computed: 연산된 값을 사용해야 할 때 사용
  * 특징은, 이 값을 조회할 때마다 특정 작업을 처리하는 것이 아니라,
  * 이 값에서 의존하는 값이 바뀔 때 미리 값을 계산해놓고 조회할 때는 캐싱 된 데이터를 사용한다는 점
@@ -39,16 +21,26 @@ const sum = computed(() => {
   return calculator.a + calculator.b;
 });
 
-sum.observe(() => calculator.a); // a 값을 주시
-sum.observe(() => calculator.b); // b 값을 주시
+/**
+ * autorun: autorun으로 전달해 주는 함수에서 사용되는 값이 있으면 자동으로 그 값을 주시하여 그 값이 바뀔 때마다 함수가 주시되도록 해준다.
+ * reaction이나 computed의 observe 대신에 사용될 수 있음
+ */
+// **** autorun 은 함수 내에서 조회하는 값을 자동으로 주시함
+autorun(() => console.log(`a 값이 ${calculator.a} 로 바뀌었네요!`));
+autorun(() => console.log(`b 값이 ${calculator.b} 로 바뀌었네요!`));
+autorun(() => sum.get()); // su
+// **** computed로 만든 값의 .get() 함수를 호출해 주면, 하나하나 observe 해주지 않아도 됨
+// sum.observe(() => calculator.a); // a 값을 주시
+// sum.observe(() => calculator.b); // b 값을 주시
 
 calculator.a = 10;
 calculator.b = 20;
 
-//**** 여러번 조회해도 computed 안의 함수를 다시 호출하지 않지만..
+// 여러번 조회해도 computed 안의 함수를 다시 호출하지 않지만..
 console.log(sum.value);
 console.log(sum.value);
 
-// 내부의 값이 바뀌면 다시 호출 함
 calculator.a = 20;
+
+// 내부의 값이 바뀌면 다시 호출 함
 console.log(sum.value);
