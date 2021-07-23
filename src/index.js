@@ -1,4 +1,4 @@
-import { decorate, observable, computed, autorun } from "mobx";
+import { decorate, observable, computed, autorun, action } from "mobx";
 
 /**
  * class로 편의점 장바구니 구현
@@ -25,8 +25,12 @@ class GS25 {
  */
 decorate(GS25, {
   basket: observable,
-  total: computed
+  total: computed,
+  select: action // **** 액션 명시
 });
+/**
+ * action: 상태에 변화를 일으키는 것
+ */
 
 const gs25 = new GS25();
 autorun(() => gs25.total);
