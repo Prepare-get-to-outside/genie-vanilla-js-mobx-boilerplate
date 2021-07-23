@@ -45,15 +45,22 @@ decorate(GS25, {
 
 const gs25 = new GS25();
 autorun(() => gs25.total);
-// *** 새 데이터 추가 될 때 알림
+// 새 데이터 추가 될 때 알림
 autorun(() => {
   if (gs25.basket.length > 0) {
     console.log(gs25.basket[gs25.basket.length - 1]);
   }
 });
-// **** 계산의 경우, 가장 처음 한번 호출이 되고, 데이터가 추가 될 때마다 계산 되고 있음
-gs25.select("물", 800);
-gs25.select("물", 800);
-gs25.select("포카칩", 1500);
+
+/**
+ * transaction으로 감쌈
+ * 계산 작업은 가장 처음 한번, 그리고 transaction 끝나고 한번 호출이 되었고,
+ * 새 데이터 추가될 때마다 알리는 부분도 3개가 다 추가된 후 마지막 객체만 콘솔에 나타남
+ */
+transaction(() => {
+  gs25.select("물", 800);
+  gs25.select("물", 800);
+  gs25.select("포카칩", 1500);
+});
 
 console.log(gs25.total);
