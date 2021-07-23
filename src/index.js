@@ -1,18 +1,12 @@
-import {
-  decorate,
-  observable,
-  computed,
-  autorun,
-  action,
-  transaction
-} from "mobx";
-
+import { observable, computed, autorun, action, transaction } from "mobx";
 /**
  * class로 편의점 장바구니 구현
  */
 class GS25 {
-  basket = [];
+  // *** decorator 문법: 정규 문법은 아니지만, babel 플러그인을 통하여 사용할 수 있는 문법
+  @observable basket = [];
 
+  @computed
   get total() {
     console.log("계산중입니다..!");
     /**
@@ -22,26 +16,18 @@ class GS25 {
     return this.basket.reduce((prev, curr) => prev + curr.price, 0);
   }
 
+  @action
   select(name, price) {
     this.basket.push({ name, price });
   }
 }
 
-/**
- * decorate 를 통해서 각 값에 MobX 함수 적용
- */
-decorate(GS25, {
-  basket: observable,
-  total: computed,
-  select: action // 액션 명시
-});
-/**
- * action: 상태에 변화를 일으키는 것
- * action 을 사용함에 있어서의 이점
- * 1. 나중에 개발자 도구에서 변화의 세부 정보를 볼 수 있고,
- * 2. 변화가 일어날 때마다 reaction들이 나타나는 것이 아니라, 변화를 한꺼번에 일으켜서 모든 액션이 끝나고 난 다음에서야 reaction이 나타나게 해줄 수 있다.
- * 액션을 한꺼번에 일으키는 건, transaction으로 할 수 있다.
- */
+// **** decorator 문법 사용하면 decorate 함수가 더 이상 필요하지 않음
+// decorate(GS25, {
+//   basket: observable,
+//   total: computed,
+//   select: action // 액션 명시
+// });
 
 const gs25 = new GS25();
 autorun(() => gs25.total);
