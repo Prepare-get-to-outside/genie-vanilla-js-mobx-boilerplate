@@ -1,4 +1,11 @@
-import { decorate, observable, computed, autorun, action } from "mobx";
+import {
+  decorate,
+  observable,
+  computed,
+  autorun,
+  action,
+  transaction
+} from "mobx";
 
 /**
  * class로 편의점 장바구니 구현
@@ -26,17 +33,27 @@ class GS25 {
 decorate(GS25, {
   basket: observable,
   total: computed,
-  select: action // **** 액션 명시
+  select: action // 액션 명시
 });
 /**
  * action: 상태에 변화를 일으키는 것
+ * action 을 사용함에 있어서의 이점
+ * 1. 나중에 개발자 도구에서 변화의 세부 정보를 볼 수 있고,
+ * 2. 변화가 일어날 때마다 reaction들이 나타나는 것이 아니라, 변화를 한꺼번에 일으켜서 모든 액션이 끝나고 난 다음에서야 reaction이 나타나게 해줄 수 있다.
+ * 액션을 한꺼번에 일으키는 건, transaction으로 할 수 있다.
  */
 
 const gs25 = new GS25();
 autorun(() => gs25.total);
+// *** 새 데이터 추가 될 때 알림
+autorun(() => {
+  if (gs25.basket.length > 0) {
+    console.log(gs25.basket[gs25.basket.length - 1]);
+  }
+});
+// **** 계산의 경우, 가장 처음 한번 호출이 되고, 데이터가 추가 될 때마다 계산 되고 있음
 gs25.select("물", 800);
-console.log(gs25.total);
 gs25.select("물", 800);
-console.log(gs25.total);
 gs25.select("포카칩", 1500);
+
 console.log(gs25.total);
