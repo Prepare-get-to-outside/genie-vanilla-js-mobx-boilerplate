@@ -9,3 +9,24 @@ const calculator = observable({
   a: 1,
   b: 2
 });
+
+/**
+ * reaction: 특정 값이 바뀔 때 특정 작업 하기!
+ * a 나 b 가 바뀔 때 console.log 로 바뀌었다고 알려주도록 코드를 작성
+ */
+reaction(
+  () => calculator.a,
+  (value, reaction) => {
+    console.log(`a 값이 ${value} 로 바뀌었네요!`);
+  }
+);
+
+reaction(
+  () => calculator.b,
+  (value) => {
+    console.log(`b 값이 ${value} 로 바뀌었네요!`);
+  }
+);
+
+calculator.a = 10;
+calculator.b = 20;
